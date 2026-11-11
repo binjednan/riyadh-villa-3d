@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>فيلا الرياض ثلاثية الأبعاد</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -103,26 +103,41 @@ ul.tight{margin:4px 0 8px;padding-inline-start:18px} ul.tight li{margin:2px 0}
   .seg button{min-height:34px;padding:5px 6px}
 }
 @media (prefers-reduced-motion:reduce){ #panel{transition:none} }
+
+/* Research-led review tools: content first, usable touch targets, explicit states. */
+body{font-size:15px}button,select{min-height:44px!important}button{min-width:44px}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--info);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}.mut{font-size:13px}.rlab{font-size:12px}.rlab small{font-size:11px}
+#head{display:block}#title{max-width:calc(100% - 130px);padding:8px 12px}#title span{display:none}
+#rail{margin-top:8px;flex-direction:row;flex-wrap:wrap;max-width:100%;justify-content:flex-start;gap:5px}#rail .seg{flex:0 0 auto}#rail .rb{min-width:58px;padding:6px 10px}
+#bPanel{position:absolute;top:0;left:0;pointer-events:auto}#panel{width:360px;max-width:36vw}#panel.hidden-panel{display:none}
+#stageStatus{position:absolute;bottom:64px;right:12px;max-width:calc(100% - 24px);font-size:12px;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 8px}
+#toast{top:130px;max-width:90%;white-space:normal;text-align:center;z-index:5}#stylebar{bottom:max(10px,env(safe-area-inset-bottom))}
+#tour{bottom:98px}#body{scroll-padding:16px}#roomSearch{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.roomresult{display:flex;width:100%;justify-content:space-between;text-align:start;gap:10px;margin:6px 0;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.toolgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0}.notice{border-inline-start:3px solid var(--warn);padding:8px 10px;background:var(--surface2);border-radius:6px;margin:8px 0;font-size:13px}
+#renderError{position:absolute;inset:140px 16px auto;padding:18px;background:var(--surface);border:2px solid var(--warn);border-radius:12px;z-index:10}
+@media(max-width:760px){#panel{width:100%;max-width:none;height:38%}#panel.max{height:72%}#panel.min{height:92px}#grab{min-height:28px!important}#title{max-width:calc(100% - 90px)}#title b{font-size:13px}#bPanel{font-size:12px;padding:4px 8px}#rail{max-width:100%;gap:4px}#rail .seg{flex:1 1 100%}#rail .rb{flex:1 1 0;min-width:44px;padding:4px;font-size:12px}#floorseg button{font-size:13px}#stageStatus{font-size:11px;bottom:62px}.toolgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.tab{padding-inline:9px}#toast{top:150px}}
+@media(max-height:550px) and (orientation:landscape){#app{flex-direction:row}#panel{height:100%;width:320px;max-width:40vw}#panel.min,#panel.max{height:100%}#grab{display:none}#title{display:none}#rail{padding-left:75px;margin:0}#rail .seg{flex:0 0 auto}#stageStatus{display:none}}
 </style>
 </head>
 <body>
 <div id="app">
   <div id="stage">
-    <canvas id="cv" aria-label="النموذج ثلاثي الأبعاد للفيلا"></canvas>
+    <canvas id="cv" tabindex="0" aria-label="النموذج ثلاثي الأبعاد للفيلا. الأسهم للتدوير، زائد وناقص للتقريب، F لملاءمة العرض."></canvas>
     <div id="ov"></div>
     <div id="head">
       <div id="title"><b>فيلا خاصة، مدينة الرياض</b><span>أرضي + أول + سطح · قسيمة ٢٧ × ٣٩٫٩ م · مقترح ١٧-٠٨-٢٠٢٦</span></div>
-      <div id="rail">
+      <button class="rb" id="bPanel" aria-expanded="true" aria-controls="panel">اللوحة</button><div id="rail">
         <div class="seg" id="floorseg" role="group" aria-label="الطابق">
           <button data-f="all" class="on">الكل</button><button data-f="GF">أرضي</button><button data-f="FF">أول</button><button data-f="RF">سطح</button>
         </div>
         <button class="rb" id="bPlan" title="قص أفقي عند +١٫٢٠ م من أرضية الطابق المختار">مسقط</button>
         <button class="rb" id="bMeasure" title="قياس مسافة بين نقطتين (M)">قياس</button>
         <button class="rb" id="bTour">جولة</button>
-        <button class="rb" id="bHome">إعادة</button>
+        <button class="rb" id="bHome">إعادة</button><button class="rb" id="bFit" title="ملاءمة الدور أو المبنى داخل الشاشة (F)">ملاءمة</button>
       </div>
     </div>
-    <div id="toast"></div>
+    <div id="toast" role="status" aria-live="polite"></div><div id="stageStatus"></div>
     <div id="tour"><h4 id="tT"></h4><p id="tP"></p><div class="row"><button class="btn" id="tPrev">السابق</button><span class="mut" id="tN"></span><span class="row"><button class="btn" id="tX">إنهاء</button><button class="btn pri" id="tNext">التالي</button></span></div></div>
     <div id="stylebar" role="group" aria-label="مقترحات الواجهات"></div>
   </div>
@@ -1199,7 +1214,7 @@ var SRC={x:['من المخطط','p-x','مستخرج من خطوط المخطط �
 var CATN={wext:'الجدران الخارجية',wint:'الجدران الداخلية',slab:'البلاطات',glass:'الزجاج والنوافذ',door:'الأبواب الخارجية',parapet:'الدروات',rail:'الدرابزين',stair:'الدرج',room:'أرضيات الغرف',fence:'السور',gate:'البوابات',pave:'التبليط',green:'المسطحات الخضراء',tree:'الأشجار',site:'أرض القسيمة',furn:'الأثاث',curtain:'الستائر',lab:'أسماء الغرف',fx:'عناصر الواجهة المقترحة',mod:'مقترحات التعديل'};
 var TYPC={living:0x4f9d8f,majlis:0x2f7f9d,master:0x7b6fc4,bed:0x9a8fd6,kitchen:0xd08a3c,bath:0x5aa7d6,wc:0x5aa7d6,maidbath:0x5aa7d6,wash:0x8fc3e0,dress:0xc59bc8,svc:0xb9a77a,svcS:0xb9a77a,maid:0xa3b56b,lobby:0xcfd3cf,pantry:0xd9a868};
 var TYPN={living:'معيشة',majlis:'مجلس',master:'نوم رئيسية',bed:'نوم',kitchen:'مطبخ',bath:'حمامات',dress:'ملابس',svc:'خدمات ومخازن',maid:'عاملة',lobby:'ردهات وحركة'};
-var S={style:store.get('style','A'),floor:'all',lens:'none',look:'styled',edges:true,shadows:true,explode:0,wallOp:1,clipH:14,clipV:0,clipAxis:'none',dark:store.get('dark',null),hour:9,month:'jun',north:109,mods:store.get('mods',{}),hidden:{},hiddenCat:{},notes:store.get('notes',{}),views:store.get('views',[]),sel:null,measure:false};
+var S={style:store.get('style','A'),floor:'all',lens:'none',look:'styled',edges:true,shadows:true,explode:0,wallOp:1,clipH:14,clipV:0,clipAxis:'none',dark:store.get('dark',null),hour:9,month:'jun',north:109,mods:store.get('mods',{}),hidden:{},hiddenCat:{},notes:store.get('notes',{}),views:store.get('views',[]),sel:null,measure:false,studio:false,quality:'balanced'};
 
 /* ---------- three setup ---------- */
 var cv=$('#cv'),stage=$('#stage');
@@ -1208,7 +1223,7 @@ try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,powerP
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.localClippingEnabled=true;
 var scene=new THREE.Scene();
-var cam=new THREE.PerspectiveCamera(38,1,0.5,600);
+var perspective=new THREE.PerspectiveCamera(38,1,0.1,600),ortho=new THREE.OrthographicCamera(-24,24,24,-24,0.1,600),cam=perspective,orthoHeight=48;
 var ctl=new THREE.OrbitControls(cam,cv);ctl.enableDamping=true;ctl.dampingFactor=0.12;ctl.maxPolarAngle=Math.PI;ctl.minDistance=3;ctl.maxDistance=220;ctl.screenSpacePanning=true;
 var HOME={p:[-20,17,46],t:[0,4.5,-4]};
 cam.position.set(HOME.p[0],HOME.p[1],HOME.p[2]);ctl.target.set(HOME.t[0],HOME.t[1],HOME.t[2]);
@@ -1216,8 +1231,8 @@ var hemi=new THREE.HemisphereLight(0xffffff,0x9c958a,0.6);scene.add(hemi);
 var sun=new THREE.DirectionalLight(0xfff1dc,0.62);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
 var sc=sun.shadow.camera;sc.left=-34;sc.right=34;sc.top=34;sc.bottom=-34;sc.near=1;sc.far=200;sun.shadow.bias=-0.0006;sun.shadow.normalBias=0.03;
 scene.add(sun);scene.add(sun.target);
-var dirty=true;function kick(){dirty=true}
-ctl.addEventListener('change',kick);
+var dirty=true,rafPending=false;function kick(){dirty=true;if(!rafPending&&!document.hidden){rafPending=true;requestAnimationFrame(loop)}}
+ctl.addEventListener('change',kick);document.addEventListener('visibilitychange',function(){if(!document.hidden)kick()});
 var CX=13.5,CY=19.95;
 function P(x,y,z){return new THREE.Vector3(x-CX,z,CY-y)}
 var LG={ST:new THREE.Group(),GF:new THREE.Group(),FF:new THREE.Group(),RF:new THREE.Group()};
@@ -1482,6 +1497,7 @@ function buildStyle(){
 
 /* ---------- modification proposals ---------- */
 var MODS=[
+ {k:'privacy',t:'شاشات تظليل خارجية لغرف النوم الأمامية',why:'طبقة مستقلة للمقارنة على نافذتي غرف النوم الأماميتين بالطابق الأول. تقلل انكشاف النظر وتختبر أثر تظليل الزجاج قبل تغيير الفتحات. المرجع يدعم مبدأ التظليل الخارجي؛ اختيار مواضع الشرائح وأبعادها هنا اقتراح خاص بهذا النموذج.',code:'ليست موافقة تنفيذية. يلزم فحص مخارج الهروب وفتح النوافذ والتنظيف وأحمال الرياح والارتداد مع الاستشاري. لا نسبة وفر طاقة معتمدة.',kind:'مقترح تصميمي، غير معتمد',ref:'https://basc.pnnl.gov/resource-guides/shading-and-solar-control-windows-and-skylights',cam:{p:[-15,12,40],t:[0,6,1]}},
  {k:'pergola',t:'تظليل خفيف للفناء الداخلي',why:'الفناء (٩٫٣ × ٦٫٤ م) مكشوف بارتفاع طابقين. شرائح تظليل خفيفة على جزء منه تخفف الحمل الحراري على الزجاج المنزلق الطويل وتجعله صالحًا للجلوس نهارًا.',code:'هياكل التظليل لا تُحتسب من نسبة البناء بعد تعديلات سبتمبر ٢٠٢٥. التغطيات الخفيفة حتى ٥٠٪ من المساحة المفتوحة (م٥).',kind:'استنتاج مبني على دراسات التظليل والأفنية',cam:{p:[4,24,14],t:[1,5,-9]}},
  {k:'carport',t:'مظلة لموقف السيارتين',why:'الموقف مرسوم بلا تغطية. مظلة خفيفة تحمي السيارات وتكمل شكل الواجهة من الشارع.',code:'عرض مدخل السيارات من ٣ إلى ٦ م (م١٥)، والمرسوم نحو ٦٫١ م تقريبًا ويحتاج تدقيقًا. المظلة ضمن التغطيات الخفيفة.',kind:'استنتاج',cam:{p:[-16,9,34],t:[-7,2,14]}},
  {k:'roofmajlis',t:'مجلس خفيف على السطح',why:'مساحة سطح الطابق الأول غير مستغلة سوى بغرفة الدرج (٣٢ م²). جلسة مغلقة من مواد خفيفة فوق الجناح الأيمن تضيف فراغًا اجتماعيًا دون المساس بنسبة البناء.',code:'تعديلات سبتمبر ٢٠٢٥ تسمح بجلسة مغلقة خفيفة على السطح دون احتسابها، مع ارتداد ١٫٥ م من جهة الشارع. تتعارض المصادر في كون الارتداد من الشارع فقط أو من كل الجهات، ويُحسم مع البلدية.',kind:'معلومة منقولة من إعلان الدائرة',cam:{p:[30,26,34],t:[8,9,0]}},
@@ -1496,6 +1512,7 @@ var modG={},modMeshes={};
 function modBox(k,b,name,col,o){o=o||{};var l=o.l||lvOf((b[2]+b[5])/2);if(b[5]<=0.6)l='ST';var u={c:'mod',l:l,n:name,s:'p',col:col,zone:o.zone,glass:o.glass,mk:k,noedge:o.noedge};var m=addBox(b,u,LG[l]);(modMeshes[k]=modMeshes[k]||[]).push(m);return m}
 function buildMods(){
   var dk=0x3d4246,wd=0x8a6a4a,wh=0xf2f0ea;
+ M.O.forEach(function(o){if(o.lvl!=='FF'||o.court||o.kind==='hi'||o.kind==='door'||['FF-glass-348','FF-glass-353'].indexOf(o.id)<0)return;var btm=o.z+o.sill,top=o.z+o.head;for(var u=o.a;u<o.b-.02;u+=.22)modBox('privacy',ob(o,u,Math.min(u+.055,o.b),.16,.34,btm,top),'شاشة غرفة نوم للتظليل والخصوصية (مقترح)',wd,{l:'FF',noedge:1});[btm,top-.045].forEach(function(z){modBox('privacy',ob(o,o.a,o.b,.16,.34,z,z+.045),'مسار تثبيت شاشة مقترحة',dk,{l:'FF'})})});
   for(var x=10.0;x<18.9;x+=0.4)modBox('pergola',[x,26.1,ZR-0.45,x+0.08,32.5,ZR-0.2],'شرائح تظليل الفناء',wd,{noedge:1,l:'FF'});
   modBox('pergola',[9.7,26.1,ZR-0.2,19.0,26.25,ZR-0.02],'عارضة حاملة',dk,{l:'FF'});modBox('pergola',[9.7,32.35,ZR-0.2,19.0,32.5,ZR-0.02],'عارضة حاملة',dk,{l:'FF'});
   modBox('carport',[2.8,0.5,2.75,9.3,6.2,2.9],'سقف مظلة السيارات',wh);[[3.1,0.7],[9.0,0.7],[3.1,5.9],[9.0,5.9]].forEach(function(c){modBox('carport',[c[0]-0.08,c[1]-0.08,G0,c[0]+0.08,c[1]+0.08,2.75],'عمود المظلة',dk,{l:'GF'})});
@@ -1537,12 +1554,12 @@ function applyVis(){
     m.children.forEach(function(c){if(c.userData.edge)c.visible=S.edges})});
   updCaps();kick()}
 function applyAll(){meshes.forEach(function(m){if(m.userData.fixedMat)return;m.material=(S.sel&&isSel(m))?hi(colorFor(m.userData)):colorFor(m.userData)});
-  sun.castShadow=S.shadows&&!planOn;applyVis()}
+  sun.castShadow=S.shadows&&!planOn&&!S.studio;applyVis()}
 var hcache={};function hi(m){var k=m.uuid;if(hcache[k])return hcache[k];var c=m.clone();if(c.emissive){c.emissive=new THREE.Color(0x2a6fdb);c.emissiveIntensity=0.55}c.transparent=m.transparent;hcache[k]=c;return c}
 function isSel(m){return S.sel&&((S.sel.id&&m.userData.id===S.sel.id)||S.sel.mesh===m)}
 function isDark(){if(S.dark!=null)return S.dark;var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches}
 function applyTheme(){var r=document.documentElement;r.classList.toggle('force-dark',S.dark===true);r.classList.toggle('force-light',S.dark===false);
-  var d=isDark();road.material.color.set(d?0x2a3033:0xcfd2cc);roadStrip.material.color.set(d?0x1c2023:0x8d9190);lineMat.color.set(d?0x0d1110:0x2b3330);hemi.intensity=d?0.5:0.6;kick()}
+  var d=isDark();road.material.color.set(d?0x2a3033:0xcfd2cc);roadStrip.material.color.set(d?0x1c2023:0x8d9190);lineMat.color.set(d?0x0d1110:0x2b3330);hemi.intensity=S.studio?0.95:(d?0.5:0.6);kick()}
 
 /* ---------- sun ---------- */
 var MON={jun:{n:'يونيو (الانقلاب الصيفي)',d:23.44},mar:{n:'مارس / سبتمبر (الاعتدال)',d:0},dec:{n:'ديسمبر (الانقلاب الشتوي)',d:-23.44}};
@@ -1552,7 +1569,7 @@ function sunCalc(){var lat=24.45*Math.PI/180,dec=MON[S.month].d*Math.PI/180,H=(S
   return {alt:alt,az:az}}
 function applySun(){var s=sunCalc(),N=S.north*Math.PI/180,a=N+s.az,alt=Math.max(s.alt,0.06);
   var dx=Math.sin(a)*Math.cos(alt),dy=Math.cos(a)*Math.cos(alt),R=80;
-  sun.position.set(dx*R,Math.sin(alt)*R,-dy*R-4);sun.target.position.set(0,0,-4);sun.intensity=s.alt>0?0.38+0.3*Math.sin(alt):0.05;
+  sun.position.set(dx*R,Math.sin(alt)*R,-dy*R-4);sun.target.position.set(0,0,-4);sun.intensity=S.studio?0.32:(s.alt>0?0.38+0.3*Math.sin(alt):0.05);if(S.studio)sun.position.set(-25,45,35);
   var o=$('#sunInfo');if(o)o.textContent='ارتفاع الشمس '+AR(s.alt*180/Math.PI,0)+'° · السمت '+AR(s.az*180/Math.PI,0)+'°';
   var f=$('#faceInfo');if(f){var nm=function(deg){deg=((deg%360)+360)%360;return ['شمال','شمال شرق','شرق','جنوب شرق','جنوب','جنوب غرب','غرب','شمال غرب'][Math.round(deg/45)%8]};
     f.innerHTML='<div>الأمامية (الشارع)</div><div>'+nm(180-S.north)+'</div><div>اليسرى</div><div>'+nm(270-S.north)+'</div><div>اليمنى</div><div>'+nm(90-S.north)+'</div><div>الخلفية</div><div>'+nm(-S.north)+'</div>'}
@@ -1561,17 +1578,18 @@ function applySun(){var s=sunCalc(),N=S.north*Math.PI/180,a=N+s.az,alt=Math.max(
 /* ---------- camera moves ---------- */
 var anim=null;
 function flyTo(p,t,ms){var p0=cam.position.clone(),t0=ctl.target.clone(),p1=new THREE.Vector3(p[0],p[1],p[2]),t1=new THREE.Vector3(t[0],t[1],t[2]),st=performance.now();ms=ms||650;
-  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)ms=1;anim=function(){var k=Math.max(0,Math.min(1,(performance.now()-st)/ms));k=k*k*(3-2*k);cam.position.lerpVectors(p0,p1,k);ctl.target.lerpVectors(t0,t1,k);if(k>=1)anim=null;kick()}}
-function resize(){var w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);cam.aspect=w/h;cam.fov=w<h?52:38;cam.updateProjectionMatrix();kick()}
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)ms=1;anim=function(){var k=Math.max(0,Math.min(1,(performance.now()-st)/ms));k=k*k*(3-2*k);cam.position.lerpVectors(p0,p1,k);ctl.target.lerpVectors(t0,t1,k);if(k>=1)anim=null;kick()};kick()}
+function resize(){var w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);if(cam.isOrthographicCamera){cam.left=-orthoHeight*w/h/2;cam.right=-cam.left;cam.top=orthoHeight/2;cam.bottom=-cam.top}else{cam.aspect=w/h;cam.fov=w<h?52:38}cam.updateProjectionMatrix();kick()}
 window.addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(resize).observe(stage);
 
 /* ---------- overlay tags (measure + note pins) ---------- */
 var ov=$('#ov'),tags=[];
 function tag(cls,txt,v){var e=el('div',cls,txt);ov.appendChild(e);var t={e:e,v:v};tags.push(t);return t}
 function clearTags(cls){tags=tags.filter(function(t){if(t.e.className===cls){t.e.remove();return false}return true})}
-function updTags(){var w=stage.clientWidth,h=stage.clientHeight;tags.forEach(function(t){if(t.vis&&!t.vis()){t.e.style.display='none';return}var p=t.v.clone();if(t.lg)p.y+=LG[t.lg].position.y;p.project(cam);var vis=p.z<1&&p.z>-1;t.e.style.display=vis?'block':'none';t.e.style.left=((p.x+1)/2*w)+'px';t.e.style.top=((1-p.y)/2*h)+'px'})}
+function updTags(){var w=stage.clientWidth,h=stage.clientHeight,used=[];tags.forEach(function(t){if(t.vis&&!t.vis()){t.e.style.display='none';return}var p=t.v.clone();if(t.lg)p.y+=LG[t.lg].position.y;var clipped=renderer.clippingPlanes.some(function(pl){return pl.distanceToPoint(p)<0});p.project(cam);var x=(p.x+1)/2*w,y=(1-p.y)/2*h,vis=!clipped&&p.z<1&&p.z>-1&&x>0&&x<w&&y>130&&y<h-95;
+ if(vis&&t.e.classList.contains('rlab')){var ww=t.e.offsetWidth||100,hh=t.e.offsetHeight||38,rect=[x-ww/2,y-hh/2,x+ww/2,y+hh/2];if(used.some(function(r){return !(rect[2]+4<r[0]||rect[0]-4>r[2]||rect[3]+4<r[1]||rect[1]-4>r[3])}))vis=false;else used.push(rect)}t.e.style.display=vis?'block':'none';t.e.style.left=x+'px';t.e.style.top=y+'px'})}
 M.R.forEach(function(r){if(r.a<1.5)return;var q=r.rects.slice().sort(function(a,b){return (b[2]-b[0])*(b[3]-b[1])-(a[2]-a[0])*(a[3]-a[1])})[0];var t=tag('rlab',r.n.replace(/ \(.*\)/,'')+'<small>'+AR(r.a,1)+' م²</small>',P((q[0]+q[2])/2,(q[1]+q[3])/2,r.z+0.3));t.e.innerHTML=r.n.replace(/ \(.*\)/,'')+'<small>'+AR(r.a,1)+' م²</small>';t.lg=r.l;t.vis=function(){return S.floor===r.l&&!S.hiddenCat.lab}});
-function loop(now){requestAnimationFrame(loop);if(anim)anim(now);if(ctl.update())dirty=true;if(dirty){dirty=false;renderer.render(scene,cam);updTags()}}
+function loop(now){rafPending=false;if(document.hidden)return;if(anim)anim(now);if(ctl.update())dirty=true;if(dirty){dirty=false;renderer.render(scene,cam);updTags();updateStatus()}if(anim)kick()}
 
 /* ---------- picking, selection, measure ---------- */
 var ray=new THREE.Raycaster(),down=null,mPts=[],mLine=null;
@@ -1599,10 +1617,10 @@ function drawNotePins(){clearTags('pin3d note');Object.keys(S.notes).forEach(fun
 
 /* ---------- panel ---------- */
 var panel=$('#panel'),body=$('#body'),tabs=$('#tabs');
-var TABS=[['over','نظرة عامة'],['fac','الواجهات'],['mods','التعديلات'],['code','الكود'],['info','العنصر'],['lay','الطبقات'],['view','العرض'],['notes','ملاحظاتي'],['src','المصادر']];
+var TABS=[['over','نظرة عامة'],['rooms','الغرف'],['fac','الواجهات'],['mods','التعديلات'],['code','الكود'],['info','العنصر'],['lay','الطبقات'],['view','العرض'],['notes','ملاحظاتي'],['src','المصادر']];
 var secs={};
-TABS.forEach(function(t){var b=el('button','tab',t[1]);b.dataset.k=t[0];b.onclick=function(){showTab(t[0])};tabs.appendChild(b);secs[t[0]]=body.appendChild(el('section','sec'))});
-function showTab(k){Array.prototype.forEach.call(tabs.children,function(b){b.classList.toggle('on',b.dataset.k===k);if(b.dataset.k===k&&b.scrollIntoView)try{b.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}});Object.keys(secs).forEach(function(s){secs[s].classList.toggle('on',s===k)});body.scrollTop=0}
+TABS.forEach(function(t){var b=el('button','tab',t[1]);b.dataset.k=t[0];b.setAttribute('role','tab');b.setAttribute('aria-controls','sec-'+t[0]);b.onclick=function(){panel.classList.remove('min');showTab(t[0]);resize()};tabs.appendChild(b);secs[t[0]]=body.appendChild(el('section','sec'));secs[t[0]].id='sec-'+t[0];secs[t[0]].setAttribute('role','tabpanel')});
+function showTab(k){Array.prototype.forEach.call(tabs.children,function(b){b.classList.toggle('on',b.dataset.k===k);b.setAttribute('aria-selected',b.dataset.k===k?'true':'false');if(b.dataset.k===k&&b.scrollIntoView)try{b.scrollIntoView({block:'nearest',inline:'nearest'})}catch(e){}});Object.keys(secs).forEach(function(s){secs[s].classList.toggle('on',s===k)});body.scrollTop=0}
 $('#grab').onclick=function(){if(panel.classList.contains('min')){panel.classList.remove('min')}else if(panel.classList.contains('max')){panel.classList.remove('max');panel.classList.add('min')}else panel.classList.add('max');setTimeout(resize,230)};
 function pill(st){return '<span class="pill p-'+(st==='ok'?'ok':st==='bad'?'bad':'chk')+'">'+(st==='ok'?'مطابق':st==='bad'?'غير مطابق':'يحتاج تحقق')+'</span>'}
 function srcPill(s){var x=SRC[s]||SRC.d;return '<span class="pill '+x[1]+'" title="'+x[2]+'">'+x[0]+'</span>'}
@@ -1646,13 +1664,13 @@ function renderFac(){var h='<h3>مقترحات الواجهات</h3><p class="mu
  '<h3>توصيتي</h3><p><b>«معاصر دافئ» مع استعارة مشربيات الطابق الأول من «الإماراتي المعاصر» للواجهتين الجانبيتين.</b> السبب: أكبر مسطح زجاجي في الفيلا (الارتفاع المزدوج) يواجه الشرق تقريبًا، والكاسرات الرأسية تعالجه مباشرة، بينما غرف النوم الجانبية تحتاج خصوصية أكثر من حاجتها للتظليل. (استنتاج، ويتوقف على تأكيد اتجاه الشمال)</p>';
  secs.fac.innerHTML=h;Array.prototype.forEach.call(secs.fac.querySelectorAll('[data-sty]'),function(b){b.onclick=function(){setStyle(b.dataset.sty)}})}
 function renderStyleBar(){var sb=$('#stylebar');sb.innerHTML='';['A','B','C','D','base'].forEach(function(k){var c=el('button','chip'+(S.style===k?' on':''),STY[k].n);c.onclick=function(){setStyle(k)};sb.appendChild(c)})}
-function setStyle(k){S.style=k;store.set('style',k);buildStyle();renderFac();renderStyleBar()}
+function setStyle(k){select(null);S.style=k;store.set('style',k);buildStyle();renderFac();renderStyleBar()}
 
 /* mods */
 function renderMods(){var h='<h3>مقترحات التعديل</h3><p class="mut">فعّل أي مقترح ليظهر في النموذج. المناطق البرتقالية الشفافة تعليم لموضع تعديل داخلي وليست عنصرًا مبنيًا.</p>';
- MODS.forEach(function(m){h+='<div class="card'+(S.mods[m.k]?' sel':'')+'"><div class="row sp"><h4>'+m.t+'</h4><button class="btn'+(S.mods[m.k]?' pri':'')+'" data-mod="'+m.k+'">'+(S.mods[m.k]?'إخفاء':'إظهار')+'</button></div><p>'+m.why+'</p><p class="mut"><b>الاشتراط:</b> '+m.code+'</p><p class="mut"><b>درجة الثقة:</b> '+m.kind+'</p></div>'});
+ MODS.forEach(function(m){h+='<div class="card'+(S.mods[m.k]?' sel':'')+'"><div class="row sp"><h4>'+m.t+'</h4><button class="btn'+(S.mods[m.k]?' pri':'')+'" data-mod="'+m.k+'">'+(S.mods[m.k]?'إخفاء':'إظهار')+'</button></div><p>'+m.why+'</p><p class="mut"><b>الاشتراط:</b> '+m.code+'</p><p class="mut"><b>درجة الثقة:</b> '+m.kind+'</p>'+(m.ref?'<a href="'+m.ref+'" target="_blank" rel="noopener">مرجع المقترح: PNNL / وزارة الطاقة الأمريكية</a>':'')+'</div>'});
  h+='<h3>ملاحظات بلا تمثيل في النموذج</h3><ul class="tight"><li><b>الارتداد الخلفي ٢٫٠ م عند المطبخ.</b> مطابق، لكنه يترك ممرًا ضيقًا. باب خدمة ومنطقة للنفايات هناك يستحقان التحديد في المخطط.</li><li><b>الارتداد الأمامي ١٤٫٨ م.</b> أكبر بكثير من المطلوب (٢ م، أو ١٫٥ م بعد التعديل). إن لم يكن الفناء الأمامي الواسع مقصودًا، فتقديم الفيلا يكبّر الفناء الخلفي ويمنحه خصوصية أعلى. قرار للمالك.</li><li><b>الحجرة غير المسماة بجوار مغاسل غرفة الأطفال</b> (١٫٠ × ٢٫٠ م). إن كانت دورة مياه فمساحتها ٢٫٠ م²، أقل من الحد الأدنى ٢٫٥ م².</li><li><b>مجلس الضيوف.</b> بابه من بهو المدخل نفسه. مدخل جانبي مستقل للضيوف من الممر الأمامي يحسّن الفصل عن العائلة.</li></ul>';
- secs.mods.innerHTML=h;Array.prototype.forEach.call(secs.mods.querySelectorAll('[data-mod]'),function(b){b.onclick=function(){var k=b.dataset.mod;S.mods[k]=!S.mods[k];store.set('mods',S.mods);refreshMods();renderMods();var m=MODS.filter(function(x){return x.k===k})[0];if(S.mods[k]){if(m.floor&&S.floor!=='all'&&S.floor!==m.floor)setFloor('all');if(m.zone&&S.wallOp>0.5){S.wallOp=0.35;syncView();applyAll()}flyTo(m.cam.p,m.cam.t)}}})}
+ secs.mods.innerHTML=h;Array.prototype.forEach.call(secs.mods.querySelectorAll('[data-mod]'),function(b){b.onclick=function(){var k=b.dataset.mod;S.mods[k]=!S.mods[k];store.set('mods',S.mods);refreshMods();renderMods();var m=MODS.filter(function(x){return x.k===k})[0];if(S.mods[k]){planOn=false;useCamera(false);S.clipH=14;S.clipAxis='none';applyClip();if(!m.floor)setFloor('all');if(m.floor&&S.floor!=='all'&&S.floor!==m.floor)setFloor('all');if(m.zone&&S.wallOp>0.5){S.wallOp=0.35;syncView();applyAll()}flyTo(m.cam.p,m.cam.t)}}})}
 
 /* code */
 function renderCode(){var I=M.info,plot=27*39.9,cov=I.areaGF/plot*100;
@@ -1683,7 +1701,7 @@ function renderCode(){var I=M.info,plot=27*39.9,cov=I.areaGF/plot*100;
   ['chk','الاستدامة (درجة لؤلؤة واحدة)','إلزامية لكل فيلا جديدة. تشمل أداء الزجاج والعزل والتظليل. خارج ما يبيّنه المخطط.','استدامة','a']];
  var cnt={ok:0,chk:0,bad:0};rows.forEach(function(r){cnt[r[0]]++});
  var rl=M.R.filter(function(r){return r.st==='chk'||r.st==='bad'});
- var h='<h3>مطابقة أولية لاشتراطات السكن الخاص</h3><p class="mut">المرجع: دليل أحكام بناء الفيلا السكنية الخاصة، دائرة البلديات والنقل، الإصدار ٢٫٠ (٢٠٢٢)، مع تعديلات سبتمبر ٢٠٢٥. اشتراطات مخطط القسيمة نفسها تسبق الدليل العام إن اختلفت.</p>'+
+ var h='<h3>مطابقة أولية لاشتراطات السكن الخاص</h3><p class="notice">هذا التبويب من النموذج الأصلي. لم تُعَد مراجعة بنوده القانونية في تحديث العارض، ولا يمثل اعتمادًا هندسيًا أو بلديًا.</p><p class="mut">المرجع: دليل أحكام بناء الفيلا السكنية الخاصة، دائرة البلديات والنقل، الإصدار ٢٫٠ (٢٠٢٢)، مع تعديلات سبتمبر ٢٠٢٥. اشتراطات مخطط القسيمة نفسها تسبق الدليل العام إن اختلفت.</p>'+
  '<div class="row" style="margin:8px 0"><span class="pill p-ok">'+AR(cnt.ok,0)+' مطابق</span><span class="pill p-chk">'+AR(cnt.chk,0)+' يحتاج تحقق</span><span class="pill p-bad">'+AR(cnt.bad,0)+' غير مطابق</span></div>';
  rows.forEach(function(r){h+='<div class="chk"><div>'+pill(r[0])+'</div><div><b>'+r[1]+'</b> <span class="mut">'+r[3]+'</span> '+srcPill(r[4])+'</div><div class="v">'+r[2]+'</div></div>'});
  h+='<h3>الغرف والفراغات (م١١)</h3><p class="mut">'+AR(M.R.length-rl.length,0)+' فراغًا بلا ملاحظة، و'+AR(rl.length,0)+' عليها ملاحظة. المساحات صافية محسوبة من الرسم.</p>';
@@ -1693,7 +1711,7 @@ function renderCode(){var I=M.info,plot=27*39.9,cov=I.areaGF/plot*100;
  secs.code.innerHTML=h;
  Array.prototype.forEach.call(secs.code.querySelectorAll('[data-room]'),function(a){a.onclick=function(e){e.preventDefault();gotoRoom(a.dataset.room)}});
  $('#bCodeLens').onclick=function(){S.lens='code';S.wallOp=0.3;setFloor(S.floor==='all'?'GF':S.floor);planView(true);syncView();applyAll()}}
-function gotoRoom(id){var r=rooms[id];if(!r)return;setFloor(r.l);S.clipH=Math.min(13.9,r.z+2.2+LG[r.l].position.y);syncView();applyClip();var c=P((r.bx[0]+r.bx[2])/2,(r.bx[1]+r.bx[3])/2,r.z);flyTo([c.x-6,c.y+16,c.z+12],[c.x,c.y,c.z]);var ms=byId[id];if(ms)select(ms[0])}
+function gotoRoom(id){if(planOn){planOn=false;$('#bPlan').classList.remove('on')}useCamera(false);var r=rooms[id];if(!r)return;setFloor(r.l);S.clipH=Math.min(13.9,r.z+2.2+LG[r.l].position.y);syncView();applyClip();var c=P((r.bx[0]+r.bx[2])/2,(r.bx[1]+r.bx[3])/2,r.z);flyTo([c.x-6,c.y+16,c.z+12],[c.x,c.y,c.z]);var ms=byId[id];if(ms)select(ms[0])}
 
 /* info card */
 function renderCard(){var s=S.sel,sec=secs.info;if(!s){sec.innerHTML='<h3>بطاقة العنصر</h3><p class="mut">اضغط أي عنصر أو غرفة في النموذج لتظهر بياناته هنا.</p>';return}
@@ -1733,7 +1751,7 @@ function renderView(){var h='<h3>المظهر</h3><div class="row"><select id="v
  '<h3>العدسات</h3><select id="vLens" aria-label="العدسة"><option value="none">بدون</option><option value="type">نوع الفراغ</option><option value="code">مطابقة الكود</option><option value="floor">الطابق</option><option value="conf">موثوقية البيان</option></select><div class="legend" id="lensLeg"></div>'+
  '<h3>القص والتفكيك</h3>'+slider('vWall','شفافية الجدران',0.1,1,0.05,S.wallOp,function(v){return AR(v*100,0)+'٪'})+slider('vExp','تفكيك الطوابق',0,10,0.5,S.explode,function(v){return AR(v,1)+' م'})+slider('vClipH','قص أفقي عند منسوب',0.5,14,0.1,S.clipH,function(v){return v>=13.9?'بدون':'+'+AR(v,1)+' م'})+
  '<div class="row"><label for="vAxis">قص رأسي</label><select id="vAxis"><option value="none">بدون</option><option value="x">عرضي (يسار ↔ يمين)</option><option value="y">طولي (شارع ↔ خلف)</option></select></div>'+slider('vClipV','موضع القص الرأسي',0,40,0.1,S.clipV,function(v){return AR(v,1)+' م'})+
- '<h3>دراسة الشمس</h3><div class="row"><select id="vMonth" aria-label="الشهر"><option value="jun">'+MON.jun.n+'</option><option value="mar">'+MON.mar.n+'</option><option value="dec">'+MON.dec.n+'</option></select></div>'+slider('vHour','الساعة',5.5,18.5,0.25,S.hour,function(v){var hh=Math.floor(v),mm=Math.round((v-hh)*60);return AR(hh,0)+':'+(mm<10?'٠':'')+AR(mm,0)})+slider('vNorth','اتجاه الشمال (درجة من أعلى المخطط مع عقارب الساعة)',0,359,1,S.north,function(v){return AR(v,0)+'°'})+
+ '<h3>تصوّر الشمس التقريبي</h3><p class="notice">الساعة هنا شمسية تقريبية وليست توقيت أبوظبي المدني. يلزم موقع واتجاه شمال مؤكدان ودراسة مختصة قبل اعتماد التظليل أو الطاقة.</p><div class="row"><select id="vMonth" aria-label="الشهر"><option value="jun">'+MON.jun.n+'</option><option value="mar">'+MON.mar.n+'</option><option value="dec">'+MON.dec.n+'</option></select></div>'+slider('vHour','الساعة الشمسية التقريبية',5.5,18.5,0.25,S.hour,function(v){var hh=Math.floor(v),mm=Math.round((v-hh)*60);return AR(hh,0)+':'+(mm<10?'٠':'')+AR(mm,0)})+slider('vNorth','اتجاه الشمال (درجة من أعلى المخطط مع عقارب الساعة)',0,359,1,S.north,function(v){return AR(v,0)+'°'})+
  '<p class="mut" id="sunInfo"></p><div class="kv" id="faceInfo"></div><p class="mut">اتجاه الشمال مقروء من سهم المخطط (نحو ١٠٩°) ويحتاج تأكيدًا من مخطط الموقع. الحساب لخط عرض أبوظبي ٢٤٫٤٥°.</p>'+
  '<h3>المناظير المحفوظة</h3><div class="row"><button class="btn pri" id="vSave">احفظ المنظور الحالي</button></div><div id="vList"></div>';
  secs.view.innerHTML=h;
@@ -1750,7 +1768,7 @@ function renderView(){var h='<h3>المظهر</h3><div class="row"><select id="v
  $('#vDark').onchange=function(){S.dark=this.value==='auto'?null:this.value==='dark';store.set('dark',S.dark);applyTheme()};
  $('#vEdges').onchange=function(){S.edges=this.checked;applyVis()};$('#vShadow').onchange=function(){S.shadows=this.checked;applyAll()};
  $('#vLens').onchange=function(){S.lens=this.value;syncView();applyAll()};
- $('#vSave').onclick=function(){S.views.push({n:'منظور '+AR(S.views.length+1,0)+' · '+STY[S.style].n,p:cam.position.toArray(),t:ctl.target.toArray(),style:S.style,floor:S.floor,lens:S.lens,clipH:S.clipH,explode:S.explode,wallOp:S.wallOp});store.set('views',S.views);renderViews();toast('حُفظ المنظور على هذا الجهاز')};
+ $('#vSave').onclick=function(){S.views.push({n:'منظور '+AR(S.views.length+1,0)+' · '+STY[S.style].n,p:cam.position.toArray(),t:ctl.target.toArray(),style:S.style,floor:S.floor,lens:S.lens,clipH:S.clipH,explode:S.explode,wallOp:S.wallOp,ortho:cam.isOrthographicCamera,orthoHeight:orthoHeight,zoom:cam.zoom,clipAxis:S.clipAxis,clipV:S.clipV});store.set('views',S.views);renderViews();toast('حُفظ المنظور على هذا الجهاز')};
  syncView();renderViews()}
 function syncView(){var set=function(id,v){var i=$('#'+id);if(i){i.value=v;if(i.oninput&&i.type==='range'){var o=$('#'+id+'_o');i.oninput.call(i);}}};
  var q=function(id,v){var i=$('#'+id);if(i)i.value=v};
@@ -1765,7 +1783,7 @@ function syncView(){var set=function(id,v){var i=$('#'+id);if(i){i.value=v;if(i.
    lg.innerHTML=L}}
 function renderViews(){var l=$('#vList');if(!l)return;l.innerHTML=S.views.length?'':'<p class="mut" style="margin-top:6px">لا مناظير محفوظة بعد.</p>';
  S.views.forEach(function(v,i){var d=el('div','row sp','<span>'+v.n+'</span><span class="row"><button class="btn" data-go="'+i+'">افتح</button><button class="btn" data-rm="'+i+'">حذف</button></span>');d.style.padding='6px 0';d.style.borderBottom='1px solid var(--line)';l.appendChild(d)});
- Array.prototype.forEach.call(l.querySelectorAll('[data-go]'),function(b){b.onclick=function(){var v=S.views[+b.dataset.go];S.lens=v.lens||'none';S.clipH=v.clipH||14;S.explode=v.explode||0;S.wallOp=v.wallOp||1;setFloor(v.floor||'all');if(v.style!==S.style)setStyle(v.style);else applyAll();applyClip();syncView();flyTo(v.p,v.t)}});
+ Array.prototype.forEach.call(l.querySelectorAll('[data-go]'),function(b){b.onclick=function(){var v=S.views[+b.dataset.go];planOn=!!v.ortho;useCamera(planOn);if(planOn){orthoHeight=v.orthoHeight||48;cam.zoom=v.zoom||1;resize()}S.clipAxis=v.clipAxis||'none';S.clipV=v.clipV||0;S.lens=v.lens||'none';S.clipH=v.clipH==null?14:v.clipH;S.explode=v.explode||0;S.wallOp=v.wallOp||1;setFloor(v.floor||'all');if(v.style!==S.style)setStyle(v.style);else applyAll();applyClip();syncView();flyTo(v.p,v.t)}});
  Array.prototype.forEach.call(l.querySelectorAll('[data-rm]'),function(b){b.onclick=function(){S.views.splice(+b.dataset.rm,1);store.set('views',S.views);renderViews()}})}
 
 /* notes */
@@ -1793,17 +1811,16 @@ secs.src.innerHTML='<h3>المصادر</h3><ul class="tight">'+
  '<p class="mut">تعارض مرصود: الإعلان الرسمي يذكر ارتداد ١٫٥ م لطابق السطح دون تحديد الجهة، وبعض الصحف تذكره من جهة الشارع وأخرى من كل الجهات. يُحسم مع البلدية قبل الاعتماد على بند السطح.</p>';
 
 /* ---------- rail controls ---------- */
-function setFloor(f){S.floor=f;Array.prototype.forEach.call($('#floorseg').children,function(b){b.classList.toggle('on',b.dataset.f===f)});applyVis()}
-function isolate(f){S.explode=0;if(f==='all'){S.clipH=14;applyClip();applyVis();syncView();flyTo(HOME.p,HOME.t);return}
-  var z=M.LV[f];S.clipH=f==='RF'?14:z+1.7;applyVis();applyClip();syncView();var ph=stage.clientWidth<stage.clientHeight;flyTo(ph?[-9,z+46,30]:[-11,z+31,21],[0,z,-7.5]);
+function setFloor(f){S.floor=f;Array.prototype.forEach.call($('#floorseg').children,function(b){b.classList.toggle('on',b.dataset.f===f);b.setAttribute('aria-pressed',b.dataset.f===f?'true':'false')});applyVis()}
+function isolate(f){useCamera(false);S.explode=0;if(f==='all'){S.clipH=14;applyClip();applyVis();syncView();flyTo(HOME.p,HOME.t);return}
+  var z=M.LV[f];S.clipH=f==='RF'?14:z+1.7;applyVis();applyClip();syncView();var ph=stage.clientWidth<stage.clientHeight;fitModel();
   if(f!=='RF')toast('الدور معزول والجدران مقصوصة عند +١٫٧ م لإظهار التوزيع')}
-Array.prototype.forEach.call($('#floorseg').children,function(b){b.onclick=function(){if(ti>=0)tourEnd();setFloor(b.dataset.f);if(planOn&&b.dataset.f!=='all')planView(true);else{if(planOn){planOn=false;sun.castShadow=S.shadows;$('#bPlan').classList.remove('on')}isolate(b.dataset.f)}}});
-function planView(on){planOn=on;$('#bPlan').classList.toggle('on',on);sun.castShadow=S.shadows&&!on;
-  if(on){var f=S.floor==='all'?'GF':S.floor;if(S.floor==='all')setFloor('GF');var z=M.LV[f]+LG[f].position.y;S.clipH=f==='RF'?13.95:z+1.2;applyClip();syncView();flyTo([0,z+62,-6.5+0.01],[0,z,-6.5])}
-  else{S.clipH=14;applyClip();syncView();setFloor('all');flyTo(HOME.p,HOME.t)}}
+Array.prototype.forEach.call($('#floorseg').children,function(b){b.onclick=function(){if(ti>=0)tourEnd();setFloor(b.dataset.f);if(planOn&&b.dataset.f!=='all')planView(true);else{if(planOn){planOn=false;sun.castShadow=S.shadows&&!S.studio;$('#bPlan').classList.remove('on')}isolate(b.dataset.f)}}});
+function planView(on){planOn=on;$('#bPlan').classList.toggle('on',on);$('#bPlan').setAttribute('aria-pressed',String(on));sun.castShadow=S.shadows&&!on&&!S.studio;
+ if(on){var f=S.floor==='all'?'GF':S.floor;if(S.floor==='all')setFloor('GF');S.explode=0;applyVis();var z=M.LV[f];S.clipH=f==='RF'?13.95:z+1.2;applyClip();useCamera(true);fitModel(true);syncView()}else{useCamera(false);S.clipH=14;applyClip();syncView();fitModel()}}
 $('#bPlan').onclick=function(){planView(!planOn)};
 $('#bMeasure').onclick=function(){S.measure=!S.measure;this.classList.toggle('on',S.measure);if(S.measure)toast('اضغط نقطتين على النموذج. النقطة تلتصق بأقرب ركن.');else clearMeasure()};
-$('#bHome').onclick=function(){planOn=false;sun.castShadow=S.shadows;$('#bPlan').classList.remove('on');S.clipH=14;S.clipAxis='none';S.explode=0;S.wallOp=1;S.lens='none';applyClip();setFloor('all');syncView();applyAll();flyTo(HOME.p,HOME.t)};
+$('#bHome').onclick=function(){if(ti>=0)tourEnd();if(S.measure)$('#bMeasure').click();select(null);useCamera(false);planOn=false;sun.castShadow=S.shadows&&!S.studio;$('#bPlan').classList.remove('on');S.clipH=14;S.clipAxis='none';S.explode=0;S.wallOp=1;S.lens='none';applyClip();setFloor('all');syncView();applyAll();flyTo(HOME.p,HOME.t)};
 var ti=-1;var TOUR=[
  {t:'الواجهة من الشارع',p:'الفيلا متراجعة ١٤٫٨ م عن الشارع خلف حديقة أمامية وموقف لسيارتين. الكتلة من جناحين يتوسطهما المدخل وصالة العائلة بارتفاع مزدوج.',c:{p:[-4,9,50],t:[0,5,-2]}},
  {t:'المدخل والارتفاع المزدوج',p:'بهو المدخل وصالة العائلة يمتدان على طابقين (نحو ٨ م). واجهتهما الزجاجية أكبر مسطح زجاجي في الفيلا وتطل على الجلسة الخارجية.',c:{p:[2,6,24],t:[1,4.5,0]}},
@@ -1813,25 +1830,55 @@ var ti=-1;var TOUR=[
  {t:'مسقط الطابق الأول',p:'أربع غرف نوم بحماماتها وغرف ملابسها، صالة جلوس علوية، ومطبخ تحضيري. الردهة العلوية جسر يطل على الفراغ المزدوج.',c:null,plan:'FF'},
  {t:'السطح',p:'غرفة الدرج (٣٢ م²) هي المبنى الوحيد على السطح. باقي المساحة مفتوح ويصلح لمجلس خفيف وحجب المعدات، وهما ضمن مقترحات التعديل.',c:{p:[-26,34,26],t:[0,8,-6]},floor:'all'}
 ];
-function tourGo(i){ti=i;var s=TOUR[i];$('#tour').style.display='block';$('#stylebar').style.display='none';$('#tT').textContent=s.t;$('#tP').textContent=s.p;$('#tN').textContent=AR(i+1,0)+' / '+AR(TOUR.length,0);
+function tourGo(i){useCamera(false);ti=i;var s=TOUR[i];$('#tour').style.display='block';$('#stylebar').style.display='none';$('#tT').textContent=s.t;$('#tP').textContent=s.p;$('#tN').textContent=AR(i+1,0)+' / '+AR(TOUR.length,0);
   $('#tPrev').disabled=i===0;$('#tNext').textContent=i===TOUR.length-1?'إنهاء':'التالي';
-  if(s.plan){setFloor(s.plan);planView(true)}else{if(planOn){planOn=false;sun.castShadow=S.shadows;$('#bPlan').classList.remove('on');S.clipH=14;applyClip();syncView()}setFloor('all');flyTo(s.c.p,s.c.t,900)}}
+  if(s.plan){setFloor(s.plan);planView(true)}else{if(planOn){planOn=false;sun.castShadow=S.shadows&&!S.studio;$('#bPlan').classList.remove('on');S.clipH=14;applyClip();syncView()}setFloor('all');flyTo(s.c.p,s.c.t,900)}}
 function tourEnd(){ti=-1;$('#tour').style.display='none';$('#stylebar').style.display='flex';$('#bTour').classList.remove('on')}
 $('#bTour').onclick=function(){if(ti>=0){tourEnd();return}this.classList.add('on');if(window.innerWidth<=760)panel.classList.add('min');setTimeout(resize,240);tourGo(0)};
 $('#tNext').onclick=function(){if(ti>=TOUR.length-1)tourEnd();else tourGo(ti+1)};$('#tPrev').onclick=function(){if(ti>0)tourGo(ti-1)};$('#tX').onclick=tourEnd;
-window.addEventListener('keydown',function(e){if(/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||'')))return;
+window.addEventListener('keydown',function(e){if(e.metaKey||e.ctrlKey||e.altKey)return;if(/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||'')))return;
   if(e.key==='m'||e.key==='M'){$('#bMeasure').click()}
   if(e.key==='h'||e.key==='H'){if(e.shiftKey)showAll();else if(S.sel){var c=$('#cHide');if(c)c.click()}}
   if(e.key==='Escape'){if(S.measure)$('#bMeasure').click();else select(null)}
   if(e.key===']'&&ti>=0)$('#tNext').click();if(e.key==='['&&ti>0)$('#tPrev').click()});
 
+/* Review improvements backed by Autodesk / Three.js / W3C / Apple / PNNL. */
+function useCamera(isOrtho){var next=isOrtho?ortho:perspective;if(cam!==next){next.position.copy(cam.position);next.quaternion.copy(cam.quaternion);cam=next;ctl.object=cam;ctl.update()}ctl.enableRotate=!isOrtho;ctl.mouseButtons.LEFT=isOrtho?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;ctl.touches.ONE=isOrtho?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;resize();kick()}
+function visibleBounds(){scene.updateMatrixWorld(true);var b=new THREE.Box3();meshes.forEach(function(m){var u=m.userData;if(!m.visible||['wext','wint','slab','parapet','stair','furn','fx','mod'].indexOf(u.c)<0)return;var box=new THREE.Box3().setFromObject(m);if(S.clipH<13.9){if(box.min.y>S.clipH)return;box.max.y=Math.min(box.max.y,S.clipH)}b.union(box)});if(b.isEmpty())b.set(new THREE.Vector3(-13,0,-20),new THREE.Vector3(13,14,6));return b}
+function fitModel(plan){var b=visibleBounds(),c=b.getCenter(new THREE.Vector3()),sz=b.getSize(new THREE.Vector3()),aspect=stage.clientWidth/Math.max(1,stage.clientHeight);anim=null;
+ if(cam.isOrthographicCamera||plan){orthoHeight=Math.max(sz.z,sz.x/aspect)*1.60;ortho.zoom=1;ctl.target.copy(c);cam.position.set(c.x,c.y+70,c.z+.001);cam.lookAt(c);resize();ctl.update();kick();return}
+ var dir=cam.position.clone().sub(ctl.target).normalize();if(!isFinite(dir.x)||dir.length()<.1)dir.set(-.5,.6,1).normalize();var radius=sz.length()/2,angle=Math.min(cam.fov*Math.PI/360,Math.atan(Math.tan(cam.fov*Math.PI/360)*aspect));var dist=radius/Math.sin(angle)*1.2;flyTo(c.clone().addScaledVector(dir,dist).toArray(),c.toArray())}
+function presetView(name){if(ti>=0)tourEnd();if(name==='plan'){planView(true);return}planOn=false;$('#bPlan').classList.remove('on');useCamera(false);var c=visibleBounds().getCenter(new THREE.Vector3()),dirs={front:[0,.12,1],back:[0,.12,-1],left:[-1,.12,0],right:[1,.12,0],iso:[-.6,.65,1]};var d=dirs[name]||dirs.iso;cam.position.copy(c).add(new THREE.Vector3(d[0],d[1],d[2]).multiplyScalar(60));ctl.target.copy(c);ctl.update();fitModel()}
+function updateStatus(){var e=$('#stageStatus');if(!e)return;var t=(S.floor==='all'?'المبنى':LVN[S.floor])+' · '+(cam.isOrthographicCamera?'مسقط متوازٍ':'منظور')+' · مقترح غير تنفيذي';if(S.studio)t+=' · إضاءة توضيحية';if(S.measure)t+=' · القياس تقريبي';e.textContent=t;$('#bPlan').setAttribute('aria-pressed',String(planOn));$('#bPlan').classList.toggle('on',planOn)}
+function qualityMode(q){S.quality=q;renderer.shadowMap.enabled=q!=='low';renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,q==='high'?2:q==='low'?1:1.5));sun.shadow.mapSize.set(q==='high'?2048:1024,q==='high'?2048:1024);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}resize();kick()}
+function exportShot(){try{renderer.render(scene,cam);updTags();var out=document.createElement('canvas'),w=cv.width,h=cv.height,scale=w/stage.clientWidth;out.width=w;out.height=h+100;var ctx=out.getContext('2d');ctx.fillStyle=isDark()?'#20282b':'#e9eeeb';ctx.fillRect(0,0,w,h+100);ctx.drawImage(cv,0,0);
+ tags.forEach(function(t){if(t.e.style.display==='none')return;var x=parseFloat(t.e.style.left)*scale,y=parseFloat(t.e.style.top)*scale,small=t.e.querySelector('small'),lines=small?[t.e.firstChild.textContent,small.textContent]:[t.e.textContent];ctx.font=(12*scale)+'px sans-serif';ctx.textAlign='center';ctx.direction='rtl';var tw=Math.max.apply(null,lines.map(function(line){return ctx.measureText(line).width})),height=lines.length*16*scale;ctx.fillStyle='rgba(255,255,255,.92)';ctx.fillRect(x-tw/2-6,y-height/2,tw+12,height);ctx.fillStyle='#172a24';lines.forEach(function(line,i){ctx.fillText(line,x,y-height/2+(i+1)*16*scale-4*scale)})});
+ ctx.fillStyle=isDark()?'#eef5f1':'#172a24';ctx.direction='rtl';ctx.textAlign='right';ctx.font='bold 24px sans-serif';ctx.fillText('فيلا الرياض · '+STY[S.style].n+' · '+(S.floor==='all'?'المبنى':LVN[S.floor]),w-24,h+37);ctx.font='18px sans-serif';ctx.fillText('مقترح بصري غير تنفيذي · الأبعاد من نموذج استرشادي · '+(cam.isOrthographicCamera?'إسقاط متوازٍ':'منظور'),w-24,h+72);
+ out.toBlob(function(blob){if(!blob){toast('تعذر تجهيز الصورة');return}var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='villa-'+S.floor+'-'+S.style+'.png';a.click();setTimeout(function(){URL.revokeObjectURL(url)},10000);toast('جُهزت لقطة PNG مع وصف حالة العرض')},'image/png')}catch(e){toast('تعذر تصدير اللقطة في هذا المتصفح')}}
+function renderRoomBrowser(){secs.rooms.innerHTML='<h3>دليل الغرف</h3><label for="roomSearch">ابحث بالاسم أو نوع الفراغ</label><input id="roomSearch" type="search" placeholder="مثال: مجلس، نوم، مطبخ"><label class="tg"><input id="roomCurrent" type="checkbox">الدور المعروض فقط</label><p class="mut">اضغط الغرفة لتقريبها وإظهار بياناتها. المساحات محسوبة من النموذج، وليست قياسًا ميدانيًا.</p><div id="roomResults"></div>';
+ function fill(){var q=$('#roomSearch').value.trim(),only=$('#roomCurrent').checked,rs=M.R.filter(function(r){return (!q||(r.n+' '+(TYPN[r.t]||'')).indexOf(q)>=0)&&(!only||S.floor==='all'||r.l===S.floor)}),box=$('#roomResults');box.innerHTML='';if(!rs.length)box.textContent='لا توجد نتائج مطابقة';rs.forEach(function(r){var b=el('button','roomresult');var a=el('span');a.textContent=r.n;var v=el('span','mut');v.textContent=LVN[r.l]+' · '+AR(r.a,1)+' م²';b.appendChild(a);b.appendChild(v);b.onclick=function(){gotoRoom(r.id)};box.appendChild(b)})}$('#roomSearch').oninput=fill;$('#roomCurrent').onchange=fill;fill()}
+function initReviewTools(){tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','أدوات مراجعة النموذج');
+ $('#bPanel').onclick=function(){var hide=!panel.classList.contains('hidden-panel');panel.classList.toggle('hidden-panel',hide);this.setAttribute('aria-expanded',String(!hide));this.textContent=hide?'إظهار اللوحة':'اللوحة';resize()};$('#bFit').onclick=function(){fitModel()};
+ var intro=el('div','card','<h3>مراجعة أوضح للتصميم</h3><p>مسقط متوازٍ، بحث للغرف، اتجاهات ثابتة، ولقطة صورة. أدوات المراجعة في تبويب «العرض».</p><div class="row"><button class="btn pri" id="quickReview">أدوات العرض</button><button class="btn" id="quickRooms">ابحث عن غرفة</button></div>');secs.over.insertBefore(intro,secs.over.firstChild);$('#quickReview').onclick=function(){showTab('view')};$('#quickRooms').onclick=function(){renderRoomBrowser();showTab('rooms')};
+ var tools=el('div','card','<h3>التنقل والتوثيق</h3><div class="toolgrid"><button class="btn" data-view="iso">منظور شامل</button><button class="btn" data-view="front">جهة الشارع</button><button class="btn" data-view="back">الخلف</button><button class="btn" data-view="left">الجانب الأيسر</button><button class="btn" data-view="right">الجانب الأيمن</button><button class="btn" data-view="plan">مسقط متوازٍ</button></div><div class="row"><button class="btn pri" id="saveShot">حفظ لقطة PNG</button><button class="btn" id="fitView">ملاءمة العرض</button></div><label class="tg"><input id="vStudio" type="checkbox">إضاءة توضيحية لقراءة الداخل</label><p class="mut">إضاءة عرض محايدة وليست محاكاة إنارة أو حساب لوكس. الجودة الخفيفة توقف الظلال لتخفيف الحمل.</p><label for="vQuality">جودة العرض</label> <select id="vQuality"><option value="balanced">متوازنة</option><option value="high">عالية</option><option value="low">خفيفة</option></select><p class="mut">أوقفنا الرسم المتكرر عند السكون لتقليل استهلاك الجهاز. في المسقط: سحب للتحريك وقرص للتقريب.</p>');secs.view.insertBefore(tools,secs.view.firstChild);
+ tools.querySelectorAll('[data-view]').forEach(function(b){b.onclick=function(){presetView(b.dataset.view)}});$('#saveShot').onclick=exportShot;$('#fitView').onclick=function(){fitModel()};$('#vStudio').onchange=function(){S.studio=this.checked;applyTheme();applySun();applyAll()};$('#vQuality').onchange=function(){qualityMode(this.value)};qualityMode('balanced');renderRoomBrowser();
+ var oldShow=showTab;showTab=function(k){if(k==='rooms')renderRoomBrowser();oldShow(k)};
+ var references=[['Autodesk Viewer','https://help.autodesk.com/cloudhelp/ENU/ADSKVIEWER-Help/files/ADSKVIEWER_Help_AutodeskViewerTools_html.html','التنقل والملاءمة وعزل العناصر وتصدير اللقطات.'],['Three.js: OrthographicCamera','https://threejs.org/docs/pages/OrthographicCamera.html','إسقاط متوازٍ حقيقي للمسقط بدل المنظور العلوي.'],['Three.js: Rendering on Demand','https://threejs.org/manual/pages/rendering-on-demand.html','الرسم عند التغيير فقط مع استمرار التخميد والحركة.'],['Three.js: Responsive Design','https://threejs.org/manual/pages/responsive.html','تغيير حجم اللوحة ونسبة الكاميرا وضبط دقة العرض.'],['Apple: UI Design Dos and Don’ts','https://developer.apple.com/design/tips/','ترتيب المحتوى ووضوح النص وأهداف اللمس.'],['W3C: Target Size','https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html','أزرار ٤٤ بكسل CSS في هذا العارض؛ ليست شهادة مطابقة شاملة.'],['SketchUp: Casting Real-World Shadows','https://help.sketchup.com/en/sketchup/casting-real-world-shadows','تمييز تصور الشمس التقريبي عن تحليل موقع مؤكد.'],['PNNL: Shading and Solar Control','https://basc.pnnl.gov/resource-guides/shading-and-solar-control-windows-and-skylights','مبدأ التظليل الخارجي وتوازنه مع الإضاءة والرؤية والتهوية؛ طبقة الشرائح مقترح خاص بالمودل.']];
+ var refBlock=el('div','card','<h3>مراجع تحديث المودل والعارض</h3><p class="mut">اطلاع مباشر على المراجع. التطبيق هنا تكييف لمبادئها وليس نسخًا لتصميم أو إثبات أداء للفيلا.</p>');references.forEach(function(r){var p=el('p'),a=el('a');a.href=r[1];a.target='_blank';a.rel='noopener';a.textContent=r[0];p.appendChild(a);p.appendChild(document.createTextNode(' — '+r[2]));refBlock.appendChild(p)});secs.src.insertBefore(refBlock,secs.src.firstChild);
+ cv.addEventListener('keydown',function(e){if(e.metaKey||e.ctrlKey||e.altKey)return;var key=e.key;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-'].indexOf(key)<0)return;e.preventDefault();var delta=cam.position.clone().sub(ctl.target);if(key==='+'||key==='='||key==='-'){if(cam.isOrthographicCamera){cam.zoom*=key==='-'?.85:1.15;cam.updateProjectionMatrix()}else cam.position.copy(ctl.target).addScaledVector(delta,key==='-'?1.15:.85)}else if(cam.isOrthographicCamera){var amount=orthoHeight/cam.zoom*.04;if(key==='ArrowLeft'||key==='ArrowRight'){var d=key==='ArrowLeft'?-amount:amount;cam.position.x+=d;ctl.target.x+=d}else{var d=key==='ArrowUp'?-amount:amount;cam.position.z+=d;ctl.target.z+=d}}else{var sp=new THREE.Spherical().setFromVector3(delta);if(key==='ArrowLeft')sp.theta-=.12;if(key==='ArrowRight')sp.theta+=.12;if(key==='ArrowUp')sp.phi=Math.max(.05,sp.phi-.12);if(key==='ArrowDown')sp.phi=Math.min(Math.PI-.05,sp.phi+.12);cam.position.copy(ctl.target).add(new THREE.Vector3().setFromSpherical(sp))}ctl.update();kick()});
+ window.addEventListener('keydown',function(e){if(e.metaKey||e.ctrlKey||e.altKey)return;if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key.toLowerCase()==='f'){e.preventDefault();fitModel()}if(e.key==='Escape'&&ti>=0)tourEnd()});
+ cv.addEventListener('webglcontextlost',function(e){e.preventDefault();var msg=el('div','card','<h3>توقف العرض الرسومي مؤقتًا</h3><p>لم تتغير بيانات النموذج. حدّث الصفحة لاستعادة العرض.</p><button class="btn" onclick="location.reload()">إعادة تحميل</button>');msg.id='renderError';stage.appendChild(msg)});
+ cv.addEventListener('webglcontextrestored',function(){var msg=$('#renderError');if(msg)msg.remove();kick()});
+ if(window.innerWidth<=760)panel.classList.add('min');document.fonts&&document.fonts.ready.then(kick);setFloor(S.floor);updateStatus();
+}
+
 /* ---------- start ---------- */
 buildMods();renderFac();renderStyleBar();renderMods();renderCode();renderCard();renderLayers();renderView();renderNotes();
-buildStyle();applyTheme();applySun();applyClip();drawNotePins();showTab('over');resize();
+buildStyle();initReviewTools();applyTheme();applySun();applyClip();drawNotePins();showTab('over');resize();
 try{new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']})}catch(e){}
 if(window.matchMedia)try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)}catch(e){}
-requestAnimationFrame(loop);
-window.__villa={S:S,flyTo:flyTo,setStyle:setStyle,setFloor:setFloor,planView:planView,showTab:showTab,M:M,meshes:meshes};
+kick();
+window.__villa={S:S,flyTo:flyTo,setStyle:setStyle,setFloor:setFloor,planView:planView,showTab:showTab,M:M,meshes:meshes,cam:function(){return cam},renderer:renderer,fitModel:fitModel,updateStatus:updateStatus};
 })();
 </script>
 </body>
