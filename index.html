@@ -1814,7 +1814,7 @@ secs.src.innerHTML='<h3>المصادر</h3><ul class="tight">'+
 function setFloor(f){S.floor=f;Array.prototype.forEach.call($('#floorseg').children,function(b){b.classList.toggle('on',b.dataset.f===f);b.setAttribute('aria-pressed',b.dataset.f===f?'true':'false')});applyVis()}
 function isolate(f){useCamera(false);S.explode=0;if(f==='all'){S.clipH=14;applyClip();applyVis();syncView();flyTo(HOME.p,HOME.t);return}
   var z=M.LV[f];S.clipH=f==='RF'?14:z+1.7;applyVis();applyClip();syncView();var ph=stage.clientWidth<stage.clientHeight;fitModel();
-  if(f!=='RF')toast('الدور معزول والجدران مقصوصة عند +١٫٧ م لإظهار التوزيع')}
+  if(f!=='RF')toast('الدور معزول والجدران مقصوصة لإظهار التوزيع')}
 Array.prototype.forEach.call($('#floorseg').children,function(b){b.onclick=function(){if(ti>=0)tourEnd();setFloor(b.dataset.f);if(planOn&&b.dataset.f!=='all')planView(true);else{if(planOn){planOn=false;sun.castShadow=S.shadows&&!S.studio;$('#bPlan').classList.remove('on')}isolate(b.dataset.f)}}});
 function planView(on){planOn=on;$('#bPlan').classList.toggle('on',on);$('#bPlan').setAttribute('aria-pressed',String(on));sun.castShadow=S.shadows&&!on&&!S.studio;
  if(on){var f=S.floor==='all'?'GF':S.floor;if(S.floor==='all')setFloor('GF');S.explode=0;applyVis();var z=M.LV[f];S.clipH=f==='RF'?13.95:z+1.2;applyClip();useCamera(true);fitModel(true);syncView()}else{useCamera(false);S.clipH=14;applyClip();syncView();fitModel()}}
