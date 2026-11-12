@@ -1,0 +1,8 @@
+{
+  "name": "riyadh-villa-viewer-checks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Development-only regression tests. The published viewer remains a standalone HTML file.",
+  "scripts": {"test": "node tests/static-model.cjs && node tests/touch-controls.cjs && node tests/dom-smoke.cjs"},
+  "devDependencies": {"linkedom": "0.18.15"}
+}
